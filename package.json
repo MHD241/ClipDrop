@@ -1,8 +1,7 @@
 {
   "name": "clipdrop-backend",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "ClipDrop backend for permitted media processing",
   "type": "module",
   "scripts": {
     "start": "node server.js"
