@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClipDrop — Video to MP4 & MP3</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;background:#080b12;color:#f7f8fb;min-height:100vh}
+nav{height:72px;display:flex;align-items:center;justify-content:space-between;max-width:1080px;margin:auto;padding:0 24px}.logo{font-size:23px;font-weight:900;letter-spacing:-1px}.logo span{color:#8b5cf6}.tag{font-size:13px;color:#9298a8}
+main{max-width:760px;margin:10vh auto 0;padding:24px;text-align:center}h1{font-size:clamp(40px,7vw,72px);line-height:.98;letter-spacing:-4px;margin:0 0 22px}.grad{background:linear-gradient(90deg,#a78bfa,#22d3ee);-webkit-background-clip:text;color:transparent}
+.sub{color:#9ca3af;font-size:18px;line-height:1.6;max-width:610px;margin:0 auto 38px}
+.card{background:#101520;border:1px solid #242b39;border-radius:24px;padding:18px;box-shadow:0 30px 80px #0007;text-align:left}
+label{font-size:13px;font-weight:700;color:#c6cad4;display:block;margin:4px 3px 9px}
+input{width:100%;border:1px solid #303848;background:#090d15;color:white;padding:17px 18px;border-radius:14px;font-size:15px;outline:none}input:focus{border-color:#8b5cf6}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+button{border:0;border-radius:14px;padding:16px;font-size:15px;font-weight:800;cursor:pointer}.mp4{background:#8b5cf6;color:white}.mp3{background:#202737;color:#fff}.mp4:hover{filter:brightness(1.1)}.mp3:hover{background:#293247}button:disabled{opacity:.5;cursor:not-allowed}
+#status{min-height:26px;text-align:center;margin:15px 5px 0;color:#aeb5c3;font-size:14px}
+.note{margin:22px auto;color:#686f7d;font-size:12px;max-width:620px;line-height:1.5}
+.pills{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:34px}.pill{border:1px solid #222a37;background:#0d111a;padding:8px 12px;border-radius:999px;color:#8e96a6;font-size:12px}
+@media(max-width:560px){main{margin-top:5vh}h1{letter-spacing:-2px}.actions{grid-template-columns:1fr}.tag{display:none}}
+</style>
+</head>
+<body>
+<nav><div class="logo">Clip<span>Drop</span></div><div class="tag">Simple. Fast. No account.</div></nav>
+<main>
+<h1>Turn media into<br><span class="grad">MP4 or MP3.</span></h1>
+<p class="sub">Paste an authorized direct media link. ClipDrop processes it and gives you the format you need.</p>
+<div class="card">
+<label for="url">DIRECT MEDIA LINK</label>
+<input id="url" type="url" placeholder="https://example.com/video.mp4" autocomplete="off">
+<div class="actions"><button class="mp4" onclick="convert('mp4')">Download MP4</button><button class="mp3" onclick="convert('mp3')">Convert to MP3</button></div>
+<div id="status"></div>
+</div>
+<div class="pills"><span class="pill">🎬 MP4</span><span class="pill">🎵 MP3</span><span class="pill">⚡ FFmpeg</span><span class="pill">🔒 No account</span></div>
+<p class="note">Use ClipDrop only for media you own or have permission to download. Social-post login/resolution can be connected later to supply the direct media link.</p>
+</main>
+<script>
+async function convert(format){
+ const input=document.getElementById('url'), status=document.getElementById('status');
+ const buttons=[...document.querySelectorAll('button')];
+ let url=input.value.trim();
+ try{let u=new URL(url);if(u.protocol!=='https:')throw 0}catch{status.textContent='⚠️ Paste a valid HTTPS direct media link first.';return}
+ buttons.forEach(b=>b.disabled=true); status.textContent='⏳ Processing… the free server may take a moment to wake up.';
+ try{
+  const r=await fetch('/api/convert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mediaUrl:url,format})});
+  if(!r.ok){let e=await r.json().catch(()=>({}));throw new Error(e.error||'Conversion failed.')}
+  const blob=await r.blob(), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=`clipdrop.${format}`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),30000);status.textContent=`✅ ${format.toUpperCase()} ready — download started.`;
+ }catch(e){status.textContent='❌ '+e.message}
+ finally{buttons.forEach(b=>b.disabled=false)}
+}
+</script>
+</body></html>

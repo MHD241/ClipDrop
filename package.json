@@ -1,6 +1,6 @@
 {
-  "name": "clipdrop-backend",
-  "version": "3.0.0",
+  "name": "clipdrop",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
   "scripts": {

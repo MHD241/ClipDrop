@@ -1,9 +1,6 @@
-# ClipDrop v3
+# ClipDrop v4
+Working frontend + Docker/FFmpeg backend for authorized direct media URLs.
 
-TikTok + Instagram gateway and FFmpeg processor.
+Deploy the repository as a Docker Web Service on Render. The homepage is served by the same service, so no separate frontend hosting or CORS configuration is needed.
 
-- `GET /health`
-- `POST /process` validates TikTok/Instagram URLs.
-- `POST /convert-direct` converts an authorized direct HTTPS media URL to MP4 or MP3.
-
-The backend does not bypass private accounts, authentication, disabled-download controls, or other access restrictions.
+Social-platform authentication/resolution is intentionally separate. Once an authorized integration supplies a direct media URL, the frontend/backend can process it as MP4 or MP3.
