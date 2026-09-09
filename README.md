@@ -1,10 +1,18 @@
-# ClipDrop Backend
-Render-ready Node.js backend for ClipDrop.
+# ClipDrop Backend v2
+
+Backend for ClipDrop.
+
+## Endpoints
+- `GET /health` — health check
+- `POST /process` — validates a TikTok page request; requires an authorized media-source integration before it can resolve media
+- `POST /convert-direct` — converts a caller-supplied HTTPS direct media URL to MP4 or MP3 using FFmpeg
+
+This project intentionally does not scrape TikTok pages, bypass disabled-download settings, remove watermarks, or defeat access controls.
 
 ## Render
-- Runtime: Node
-- Build command: `npm install`
-- Start command: `npm start`
-- Health check: `/health`
+For FFmpeg support, deploy this repository as Docker rather than the plain Node runtime:
+- Runtime: Docker
+- Dockerfile: `./Dockerfile`
+- Free instance where available
 
-The processor intentionally does not bypass platform download/access restrictions. Connect an authorized media source before enabling downloads.
+The existing Node deployment can still be used to test `/health`.
